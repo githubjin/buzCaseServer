@@ -1,0 +1,417 @@
+# 八字命理案例
+type Article implements Node {
+  # The ID of an object
+  id: ID!
+  attachments: [String]
+  title: String
+  categories: [String]
+  name: String
+  gender: String
+  education: String
+  birthday: Float
+  homePlace: HomePlace
+  jobs: [String]
+  marriage: String
+  children: String
+  events: [Event]
+  knowledge: String
+  notes: [Note]
+  createdAt: Date
+}
+
+# 八字案例命苦列表信息
+type ArticleConnection {
+  pageInfo: CustomPageInfo
+  edges: [Article]
+}
+
+# 案例查询条件
+input articleFilterInput {
+  pageSize: Int
+  page: Int
+  sorters: [QuerySorter]
+  categories: [String]
+  gender: String
+  education: String
+  birthday: Float
+  homePlace: HomePlaceArgs
+  jobs: [String]
+  marriage: String
+  createOn: Float
+}
+
+# 案例类型
+type Category implements Node {
+  # The ID of an object
+  id: ID!
+  name: String
+  hitrate: Float
+  order: Int
+}
+
+# A connection to a list of items.
+type CategoryConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [CategoryEdge]
+}
+
+# An edge in a connection.
+type CategoryEdge {
+  # The item at the end of the edge
+  node: Category
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+# 分页统计信息
+type CustomPageInfo {
+  total: Int
+  totalPage: Int
+  currentPage: Int
+  pageSize: Int
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+}
+
+# Date custom scalar type
+scalar Date
+
+# 通用数据字典
+type Dictionary implements Node {
+  # The ID of an object
+  id: ID!
+  name: String
+  hitrate: Float
+  order: Int
+}
+
+# A connection to a list of items.
+type DictionaryConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [DictionaryEdge]
+}
+
+# An edge in a connection.
+type DictionaryEdge {
+  # The item at the end of the edge
+  node: Dictionary
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+# 最高教育层次
+type Education implements Node {
+  # The ID of an object
+  id: ID!
+  name: String
+  hitrate: Float
+  order: Int
+}
+
+# A connection to a list of items.
+type EducationConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [EducationEdge]
+}
+
+# An edge in a connection.
+type EducationEdge {
+  # The item at the end of the edge
+  node: Education
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+# 案例人的重要事件
+type Event implements Node {
+  # The ID of an object
+  id: ID!
+  text: String
+  createdAt: Date
+}
+
+# 案例大事件变动信息
+input EventMutationInput {
+  sub: [ID]
+  add: [String]
+  update: [EventUpdateInput]
+}
+
+# 大事件修改的内容
+input EventUpdateInput {
+  id: ID
+  text: String
+}
+
+# 用户反馈
+type Feedback implements Node {
+  # The ID of an object
+  id: ID!
+  text: String
+  username: String
+  isPublic: Boolean
+  createdAt: Date
+}
+
+# 用户反馈列表
+type FeedbackConnection {
+  pageInfo: CustomPageInfo
+  edges: [Feedback]
+}
+
+# 性别
+type Gender implements Node {
+  # The ID of an object
+  id: ID!
+  name: String
+  hitrate: Float
+  order: Int
+}
+
+# A connection to a list of items.
+type GenderConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [GenderEdge]
+}
+
+# An edge in a connection.
+type GenderEdge {
+  # The item at the end of the edge
+  node: Gender
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+# 出生地点省市县
+type HomePlace {
+  province: String
+  city: String
+  area: String
+  address: String
+}
+
+# 出生地点省市县
+input HomePlaceArgs {
+  province: String
+  city: String
+  area: String
+  address: String
+}
+
+# 工作类型
+type Job implements Node {
+  # The ID of an object
+  id: ID!
+  name: String
+  hitrate: Float
+  order: Int
+}
+
+# A connection to a list of items.
+type JobConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [JobEdge]
+}
+
+# An edge in a connection.
+type JobEdge {
+  # The item at the end of the edge
+  node: Job
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+# 婚姻情况
+type Marriage implements Node {
+  # The ID of an object
+  id: ID!
+  name: String
+  hitrate: Float
+  order: Int
+}
+
+# A connection to a list of items.
+type MarriageConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [MarriageEdge]
+}
+
+# An edge in a connection.
+type MarriageEdge {
+  # The item at the end of the edge
+  node: Marriage
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+# 案例记录人(大师)
+type MasterType {
+  # 八字命理案例列表
+  articles(filter: articleFilterInput): ArticleConnection
+
+  # 用户反馈列表分页查询
+  feedbacks(pageSize: Int, page: Int, sorters: [QuerySorter]): FeedbackConnection
+}
+
+type Mutation {
+  saveArticle(input: SaveArticleInput!): SaveArticlePayload
+}
+
+# An object with an ID
+interface Node {
+  # The id of the object.
+  id: ID!
+}
+
+# 案例后续追加的分析
+type Note implements Node {
+  # The ID of an object
+  id: ID!
+  text: String
+  createdAt: Date
+}
+
+# 案例备注变动信息
+input NoteMutationInput {
+  sub: [ID]
+  add: [String]
+  update: [NoteUpdateInput]
+}
+
+# 备注修改的内容
+input NoteUpdateInput {
+  id: ID
+  text: String
+}
+
+# Information about pagination in a connection.
+type PageInfo {
+  # When paginating forwards, are there more items?
+  hasNextPage: Boolean!
+
+  # When paginating backwards, are there more items?
+  hasPreviousPage: Boolean!
+
+  # When paginating backwards, the cursor to continue.
+  startCursor: String
+
+  # When paginating forwards, the cursor to continue.
+  endCursor: String
+}
+
+type Query {
+  # Fetches an object given its ID
+  node(
+    # The ID of an object
+    id: ID!
+  ): Node
+
+  # 大师
+  master: MasterType
+
+  # 区域
+  provinces(after: String, first: Int, before: String, last: Int): QuyuConnection
+
+  # 类型标签
+  categories(after: String, first: Int, before: String, last: Int): CategoryConnection
+
+  # 教育层次
+  educations(after: String, first: Int, before: String, last: Int): EducationConnection
+
+  # 工作
+  jobs(after: String, first: Int, before: String, last: Int): JobConnection
+
+  # 性别
+  genders(after: String, first: Int, before: String, last: Int): GenderConnection
+
+  # 婚姻状况
+  marriages(after: String, first: Int, before: String, last: Int): MarriageConnection
+
+  # 数据字典汇总查询
+  dic(after: String, first: Int, before: String, last: Int, code: String): DictionaryConnection
+}
+
+# 排序方式
+input QuerySorter {
+  order: String
+  dir: String
+}
+
+# 省市县区域信息
+type Quyu implements Node {
+  # The ID of an object
+  id: ID!
+  name: String
+  hitrate: Float
+  order: Int
+  isLeaf: Boolean
+  parent: String
+  code: String
+  level: Int
+  children(code: String, all: Boolean): [Quyu]
+}
+
+# A connection to a list of items.
+type QuyuConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [QuyuEdge]
+}
+
+# An edge in a connection.
+type QuyuEdge {
+  # The item at the end of the edge
+  node: Quyu
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+input SaveArticleInput {
+  id: ID
+  attachments: [String]
+  title: String
+  categories: [String]
+  name: String
+  gender: String
+  birthday: Float
+  homePlace: HomePlaceArgs
+  jobs: [String]
+  marriage: String
+  children: String
+  events: EventMutationInput
+  knowledge: String
+  notes: NoteMutationInput
+  clientMutationId: String
+}
+
+type SaveArticlePayload {
+  newArticle: Article
+  clientMutationId: String
+}
