@@ -1,27 +1,19 @@
 // @flow
 import {
-  GraphQLInputObjectType,
-} from 'graphql';
-import ArticleConnection from '../../types/ArticleConnection';
-import { pageArgs, sorterArgs, conditionArgs } from '../../types/queryArgs';
-import { queryArticle } from '../../../repo/queryParse';
+  CustomConnectionArgs,
+  CustomConnectionDifinition
+} from "../../connection";
+import ArticleType from "../../types/ArticleType";
+import customConnectionFromPromiseArray
+  from "../customConnectionFromPromiseArray";
+import { queryArticle } from "../../../repo/queryParse";
+import { conditionArgs } from "../../types/queryArgs";
 
 module.exports = {
-  type: ArticleConnection,
+  type: CustomConnectionDifinition({ name: "Article", nodeType: ArticleType }),
   description: "八字命理案例列表",
-  args: {
-    filter: {
-      type: new GraphQLInputObjectType({
-        name: "articleFilterInput",
-        description: "案例查询条件",
-        fields: {
-          ...pageArgs, ...sorterArgs, ...conditionArgs
-        }
-      })
-    }
-  },
+  args: { ...CustomConnectionArgs, ...conditionArgs },
   resolve: (source: Object, args: Object) => {
-    // console.log(args);
-    return queryArticle(args);
+    return customConnectionFromPromiseArray(queryArticle(args), args);
   }
 };

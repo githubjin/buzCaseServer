@@ -1,38 +1,72 @@
 // @flow
-import {
-  GraphQLString,
-  GraphQLBoolean,
-  GraphQLNonNull,
-} from 'graphql';
+import { GraphQLString, GraphQLBoolean, GraphQLNonNull } from "graphql";
 import {
   toGlobalId,
-  mutationWithClientMutationId
-} from 'graphql-relay';
-import FeedbackType from '../types/FeedbackType';
-import RootQueryType from '../query/RootQueryType';
+  connectionDefinitions,
+  mutationWithClientMutationId,
+  offsetToCursor
+} from "graphql-relay";
+import FeedbackType from "../types/FeedbackType";
+import RootQueryType from "../query/RootQueryType";
+import Parse from "parse/node";
+import _ from "lodash";
+import { ROOT_MASTER } from "../../constants";
+import { getEdgeTypeByNodeName } from "../connection";
 
 export default mutationWithClientMutationId({
   name: "AddFeedback",
   inputFields: {
     text: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: new GraphQLNonNull(GraphQLString)
     },
     isPublic: {
-      type: new GraphQLNonNull(GraphQLBoolean),
+      type: new GraphQLNonNull(GraphQLBoolean)
     }
   },
   outputFields: {
     newEdge: {
-      type: FeedbackType,
-      resolve: (edge) => {
-        return edge;
-      },
+      type: getEdgeTypeByNodeName("Feedback"),
+      resolve: ({ edge }) => {
+        return {
+          cursor: offsetToCursor(0),
+          node: edge
+        };
+      }
     },
-    feedbacks: {
-
+    master: {
+      type: RootQueryType,
+      resolve: () => ROOT_MASTER
+    },
+    error: {
+      type: GraphQLString,
+      resolve: ({ error }) => {
+        if (_.isEmpty(error)) {
+          return null;
+        }
+        return JSON.stringify(error);
+      }
     }
   },
-  mutateAndGetPayload: ({text, isPublic}) => {
-
-  },
+  mutateAndGetPayload: ({ text, isPublic }, req) => {
+    return new Promise((resolve, reject) => {
+      const { userId, username, sessionToken } = req.master;
+      var Feedback = Parse.Object.extend("Feedback");
+      var User = Parse.Object.extend("User");
+      var user = new User();
+      user.id = userId;
+      var feedback = new Feedback();
+      feedback.set("text", text);
+      feedback.set("creator", user);
+      feedback.set("username", username);
+      feedback.set("isPublic", isPublic);
+      feedback.save({ sessionToken }).then(
+        obj => {
+          resolve({ edge: obj });
+        },
+        error => {
+          resolve({ error });
+        }
+      );
+    });
+  }
 });

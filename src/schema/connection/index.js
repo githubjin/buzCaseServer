@@ -1,9 +1,12 @@
 // @flow
 
-import CustomConnectionArgs from './CustomConnectionArgs';
-import CustomConnectionDifinition from './CustomConnectionDifinition';
+import CustomConnectionArgs from "./CustomConnectionArgs";
+import CustomConnectionDifinition, {
+  getEdgeTypeByNodeName
+} from "./CustomConnectionDifinition";
 
 module.exports = {
   CustomConnectionArgs,
-  CustomConnectionDifinition
-}
+  CustomConnectionDifinition,
+  getEdgeTypeByNodeName
+};

@@ -1,14 +1,12 @@
 // @flow
-import Parse from 'parse/node';
-import {
-  fromGlobalId,
-  mutationWithClientMutationId,
-} from 'graphql-relay';
+import Parse from "parse/node";
+import { fromGlobalId, mutationWithClientMutationId } from "graphql-relay";
 
-import SaveArticleMutationArgsTypes from '../types/SaveArticleMutationArgsTypes'
-import ArticleType from '../types/ArticleType'
+import SaveArticleMutationArgsTypes
+  from "../types/SaveArticleMutationArgsTypes";
+import ArticleType from "../types/ArticleType";
 
-const Article  = Parse.Object.extend('Article');
+const Article = Parse.Object.extend("Article");
 
 const SaveArticleMutation = mutationWithClientMutationId({
   name: "SaveArticle",
@@ -26,7 +24,7 @@ const SaveArticleMutation = mutationWithClientMutationId({
   mutateAndGetPayload: ({ id }) => {
     const articleId = fromGlobalId(id).id;
     return { id: articleId };
-  },
+  }
 });
 
 export default SaveArticleMutation;

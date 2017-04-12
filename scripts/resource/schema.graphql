@@ -1,3 +1,16 @@
+input AddFeedbackInput {
+  text: String!
+  isPublic: Boolean!
+  clientMutationId: String
+}
+
+type AddFeedbackPayload {
+  newEdge: FeedbackEdge
+  master: MasterType
+  error: String
+  clientMutationId: String
+}
+
 # 八字命理案例
 type Article implements Node {
   # The ID of an object
@@ -13,23 +26,33 @@ type Article implements Node {
   jobs: [String]
   marriage: String
   children: String
-  events: [Event]
+  events: EventConnection
   knowledge: String
-  notes: [Note]
+  notes: NoteConnection
   createdAt: Date
 }
 
-# 八字案例命苦列表信息
+# A connection to a list of items.
 type ArticleConnection {
-  pageInfo: CustomPageInfo
-  edges: [Article]
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [ArticleEdge]
+  totalInfo: TotalInfo
+}
+
+# An edge in a connection.
+type ArticleEdge {
+  # The item at the end of the edge
+  node: Article
+
+  # A cursor for use in pagination
+  cursor: String!
 }
 
 # 案例查询条件
-input articleFilterInput {
-  pageSize: Int
-  page: Int
-  sorters: [QuerySorter]
+input ArticleFilters {
   categories: [String]
   gender: String
   education: String
@@ -65,16 +88,6 @@ type CategoryEdge {
 
   # A cursor for use in pagination
   cursor: String!
-}
-
-# 分页统计信息
-type CustomPageInfo {
-  total: Int
-  totalPage: Int
-  currentPage: Int
-  pageSize: Int
-  hasNextPage: Boolean
-  hasPreviousPage: Boolean
 }
 
 # Date custom scalar type
@@ -142,6 +155,24 @@ type Event implements Node {
   createdAt: Date
 }
 
+# A connection to a list of items.
+type EventConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [EventEdge]
+}
+
+# An edge in a connection.
+type EventEdge {
+  # The item at the end of the edge
+  node: Event
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
 # 案例大事件变动信息
 input EventMutationInput {
   sub: [ID]
@@ -165,10 +196,23 @@ type Feedback implements Node {
   createdAt: Date
 }
 
-# 用户反馈列表
+# A connection to a list of items.
 type FeedbackConnection {
-  pageInfo: CustomPageInfo
-  edges: [Feedback]
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [FeedbackEdge]
+  totalInfo: TotalInfo
+}
+
+# An edge in a connection.
+type FeedbackEdge {
+  # The item at the end of the edge
+  node: Feedback
+
+  # A cursor for use in pagination
+  cursor: String!
 }
 
 # 性别
@@ -269,16 +313,73 @@ type MarriageEdge {
 }
 
 # 案例记录人(大师)
-type MasterType {
+type MasterType implements Node {
+  # The ID of an object
+  id: ID!
+  username: String
+  email: String
+  sessionToken: String
+  emailVerified: Boolean
+
   # 八字命理案例列表
-  articles(filter: articleFilterInput): ArticleConnection
+  articles(
+    pageSize: Int
+    page: Int
+    sorters: [QuerySorter]
+    after: String
+    first: Int
+    before: String
+    last: Int
+
+    # find by node id
+    find: String
+    conditions: ArticleFilters
+  ): ArticleConnection
 
   # 用户反馈列表分页查询
-  feedbacks(pageSize: Int, page: Int, sorters: [QuerySorter]): FeedbackConnection
+  feedbacks(
+    pageSize: Int
+    page: Int
+    sorters: [QuerySorter]
+    after: String
+    first: Int
+    before: String
+    last: Int
+
+    # find by node id
+    find: String
+  ): FeedbackConnection
+
+  # 区域
+  provinces(after: String, first: Int, before: String, last: Int): QuyuConnection
+
+  # 类型标签
+  categories(after: String, first: Int, before: String, last: Int): CategoryConnection
+
+  # 教育层次
+  educations(after: String, first: Int, before: String, last: Int): EducationConnection
+
+  # 工作
+  jobs(after: String, first: Int, before: String, last: Int): JobConnection
+
+  # 性别
+  genders(after: String, first: Int, before: String, last: Int): GenderConnection
+
+  # 婚姻状况
+  marriages(after: String, first: Int, before: String, last: Int): MarriageConnection
+
+  # 数据字典汇总查询
+  dic(after: String, first: Int, before: String, last: Int, code: String): DictionaryConnection
+
+  # 获取市县区级列表
+  subQuyu(code: String): [Quyu]
 }
 
 type Mutation {
   saveArticle(input: SaveArticleInput!): SaveArticlePayload
+  addFeedback(input: AddFeedbackInput!): AddFeedbackPayload
+  signUp(input: SignUpInput!): SignUpPayload
+  signIn(input: SignInInput!): SignInPayload
 }
 
 # An object with an ID
@@ -293,6 +394,24 @@ type Note implements Node {
   id: ID!
   text: String
   createdAt: Date
+}
+
+# A connection to a list of items.
+type NoteConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [NoteEdge]
+}
+
+# An edge in a connection.
+type NoteEdge {
+  # The item at the end of the edge
+  node: Note
+
+  # A cursor for use in pagination
+  cursor: String!
 }
 
 # 案例备注变动信息
@@ -332,27 +451,6 @@ type Query {
 
   # 大师
   master: MasterType
-
-  # 区域
-  provinces(after: String, first: Int, before: String, last: Int): QuyuConnection
-
-  # 类型标签
-  categories(after: String, first: Int, before: String, last: Int): CategoryConnection
-
-  # 教育层次
-  educations(after: String, first: Int, before: String, last: Int): EducationConnection
-
-  # 工作
-  jobs(after: String, first: Int, before: String, last: Int): JobConnection
-
-  # 性别
-  genders(after: String, first: Int, before: String, last: Int): GenderConnection
-
-  # 婚姻状况
-  marriages(after: String, first: Int, before: String, last: Int): MarriageConnection
-
-  # 数据字典汇总查询
-  dic(after: String, first: Int, before: String, last: Int, code: String): DictionaryConnection
 }
 
 # 排序方式
@@ -414,4 +512,44 @@ input SaveArticleInput {
 type SaveArticlePayload {
   newArticle: Article
   clientMutationId: String
+}
+
+input SignInInput {
+  username: String!
+  password: String!
+  clientMutationId: String
+}
+
+type SignInPayload {
+  error: String
+  master: MasterType
+  clientMutationId: String
+}
+
+input SignUpInput {
+  username: String!
+  email: String!
+  password: String!
+  clientMutationId: String
+}
+
+type SignUpPayload {
+  error: String
+  master: MasterType
+  clientMutationId: String
+}
+
+# 数据的统计信息
+type TotalInfo {
+  # 数据总数
+  total: Int
+
+  # 数据总页
+  totalPage: Int
+
+  # 当前页码
+  currentPage: Int
+
+  # 每页数据数量
+  pageSize: Int
 }

@@ -18,7 +18,7 @@ export default new GraphQLObjectType({
   name: "Feedback",
   description: "用户反馈",
   fields: {
-    id: globalIdField('Gender'),
+    id: globalIdField('Feedback'),
     text: {
       type: GraphQLString,
       resolve: parent => parent.get('text'),

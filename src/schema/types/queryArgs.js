@@ -39,28 +39,36 @@ export const sorterArgs = {
   }
 };
 export const conditionArgs = {
-    categories: {
-      type: new GraphQLList(GraphQLString),
-    },
-    gender: {
-      type: GraphQLString,
-    },
-    education: {
-      type: GraphQLString,
-    },
-    birthday: {
-      type: GraphQLFloat,
-    },
-    homePlace: {
-      type: HomePlaceArgsType,
-    },
-    jobs: {
-      type: new GraphQLList(GraphQLString),
-    },
-    marriage: {
-      type: GraphQLString,
-    },
-    createOn: {
-      type: GraphQLFloat,
-    },
+    conditions: {
+      type: new GraphQLInputObjectType({
+        name: "ArticleFilters",
+        description: "案例查询条件",
+        fields: {
+          categories: {
+            type: new GraphQLList(GraphQLString),
+          },
+          gender: {
+            type: GraphQLString,
+          },
+          education: {
+            type: GraphQLString,
+          },
+          birthday: {
+            type: GraphQLFloat,
+          },
+          homePlace: {
+            type: HomePlaceArgsType,
+          },
+          jobs: {
+            type: new GraphQLList(GraphQLString),
+          },
+          marriage: {
+            type: GraphQLString,
+          },
+          createOn: {
+            type: GraphQLFloat,
+          },
+        }
+      }),
+    }
 };

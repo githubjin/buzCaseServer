@@ -12,20 +12,19 @@ export type Conditions = {
   pageSize: number,
   page: number,
   sorters?: Array<Sorter>,
-  categories?: Array<string>,
-  gender?: string,
-  birthday?: number,
-  homePlace?: HomePlace,
-  jobs?:Array<string>,
-  marriage?:string,
-  createOn?: number,
-  education: string,
-}
+  conditions: Object
+};
 export type ConditionsWrap = {
   filter: Conditions
-}
+};
 export type CommonArgs = {
   sorters?: Array<Sorter>,
   pageSize: number,
+  page: number
+};
+export type CommonArgsWithToken = {
+  sorters?: Array<Sorter>,
+  pageSize: number,
   page: number,
-}
+  sessionToken?: string
+};
