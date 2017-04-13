@@ -63,6 +63,58 @@ input ArticleFilters {
   createOn: Float
 }
 
+input ArticleMutationInput {
+  # Article Global ID
+  id: String!
+
+  # Article fields
+  keys: [String]
+
+  # Article fields values
+  values: [String]
+
+  # deleted event ids
+  subEvents: [String]
+
+  # deleted note ids
+  subNotes: [String]
+
+  # added event contents
+  addEvents: [String]
+
+  # added note values
+  addNotes: [String]
+
+  # updated note ids
+  noteIds: [String]
+
+  # updated note values
+  noteValues: [String]
+
+  # updated event ids
+  eventIds: [String]
+
+  # updated event values
+  eventValues: [String]
+
+  # 是否是提交操作
+  submit: Boolean
+  clientMutationId: String
+}
+
+type ArticleMutationPayload {
+  keys: [String]
+  eventKey2Ids: [String]
+  article: Article
+  newEvents: [EventEdge]
+  newNotes: [NoteEdge]
+  subEvents: [EventEdge]
+  subNotes: [NoteEdge]
+  updatedEvents: [EventEdge]
+  updatedNotes: [NoteEdge]
+  clientMutationId: String
+}
+
 # 案例类型
 type Category implements Node {
   # The ID of an object
@@ -152,6 +204,7 @@ type Event implements Node {
   # The ID of an object
   id: ID!
   text: String
+  key: Int
   createdAt: Date
 }
 
@@ -171,19 +224,6 @@ type EventEdge {
 
   # A cursor for use in pagination
   cursor: String!
-}
-
-# 案例大事件变动信息
-input EventMutationInput {
-  sub: [ID]
-  add: [String]
-  update: [EventUpdateInput]
-}
-
-# 大事件修改的内容
-input EventUpdateInput {
-  id: ID
-  text: String
 }
 
 # 用户反馈
@@ -376,7 +416,7 @@ type MasterType implements Node {
 }
 
 type Mutation {
-  saveArticle(input: SaveArticleInput!): SaveArticlePayload
+  saveArticle(input: ArticleMutationInput!): ArticleMutationPayload
   addFeedback(input: AddFeedbackInput!): AddFeedbackPayload
   signUp(input: SignUpInput!): SignUpPayload
   signIn(input: SignInInput!): SignInPayload
@@ -393,6 +433,7 @@ type Note implements Node {
   # The ID of an object
   id: ID!
   text: String
+  key: Int
   createdAt: Date
 }
 
@@ -412,19 +453,6 @@ type NoteEdge {
 
   # A cursor for use in pagination
   cursor: String!
-}
-
-# 案例备注变动信息
-input NoteMutationInput {
-  sub: [ID]
-  add: [String]
-  update: [NoteUpdateInput]
-}
-
-# 备注修改的内容
-input NoteUpdateInput {
-  id: ID
-  text: String
 }
 
 # Information about pagination in a connection.
@@ -489,29 +517,6 @@ type QuyuEdge {
 
   # A cursor for use in pagination
   cursor: String!
-}
-
-input SaveArticleInput {
-  id: ID
-  attachments: [String]
-  title: String
-  categories: [String]
-  name: String
-  gender: String
-  birthday: Float
-  homePlace: HomePlaceArgs
-  jobs: [String]
-  marriage: String
-  children: String
-  events: EventMutationInput
-  knowledge: String
-  notes: NoteMutationInput
-  clientMutationId: String
-}
-
-type SaveArticlePayload {
-  newArticle: Article
-  clientMutationId: String
 }
 
 input SignInInput {

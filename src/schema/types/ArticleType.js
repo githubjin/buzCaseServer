@@ -23,14 +23,27 @@ import { nodeInterface } from "./NodeType";
 import { Date } from "./CustomeScalarTypes";
 import { findEventOrNoteByArticle } from "../../repo/queryParse";
 
-var { connectionType: EventConnection } = connectionDefinitions({
+const EventAndNoteEdgeType = {};
+var {
+  connectionType: EventConnection,
+  edgeType: EventEdge
+} = connectionDefinitions({
   name: EventType.name,
   nodeType: EventType
 });
-var { connectionType: NoteConnection } = connectionDefinitions({
+var {
+  connectionType: NoteConnection,
+  edgeType: NoteEdge
+} = connectionDefinitions({
   name: NoteType.name,
   nodeType: NoteType
 });
+EventAndNoteEdgeType[EventType.name] = EventEdge;
+EventAndNoteEdgeType[NoteType.name] = NoteEdge;
+
+export function getEventOrNoteEdgeType(nodeName: string) {
+  return EventAndNoteEdgeType[nodeName];
+}
 
 var ArticleType = new GraphQLObjectType({
   name: "Article",

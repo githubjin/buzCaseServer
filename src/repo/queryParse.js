@@ -2,12 +2,7 @@
 import Parse from "parse/node";
 import _ from "lodash";
 import { SORT_TYPE_ASC } from "../constants";
-import type {
-  ConditionsWrap,
-  CommonArgs,
-  Conditions,
-  CommonArgsWithToken
-} from "./types";
+import type { Conditions, CommonArgsWithToken } from "./types";
 import { addSortToQuery } from "./utils";
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
@@ -24,11 +19,13 @@ export function queryArticle(
     homePlace,
     jobs,
     marriage,
-    createOn
+    createOn,
+    submit = true
   } = filters;
   const Article = Parse.Object.extend("Article");
   var query = new Parse.Query(Article);
   query.equalTo("isvalid", true);
+  query.equalTo("submit", submit);
   if (!_.isEmpty(categories)) {
     query.containsAll("categories", categories);
   }
