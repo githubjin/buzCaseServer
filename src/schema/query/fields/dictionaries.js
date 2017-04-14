@@ -22,6 +22,12 @@ const Quyu = Parse.Object.extend("Quyu");
 const Gender = Parse.Object.extend("Gender");
 const Marriage = Parse.Object.extend("Marriage");
 
+const EdgeTypes = {};
+export function getEdgeTypeByNodeName(nodeName: string) {
+  // console.log(nodeName);
+  return EdgeTypes[nodeName];
+}
+
 function dictionaryQueryField(
   type,
   description,
@@ -29,10 +35,14 @@ function dictionaryQueryField(
   resolve,
   args = {}
 ) {
-  var { connectionType: customConnection } = connectionDefinitions({
+  var {
+    connectionType: customConnection,
+    edgeType: GraphQLEdge
+  } = connectionDefinitions({
     name: type.name,
     nodeType: type
   });
+  EdgeTypes[type.name] = GraphQLEdge;
   return {
     type: customConnection,
     description,
@@ -71,7 +81,7 @@ function dictionaryPoolQueryField() {
   };
 }
 
-module.exports = {
+export const DictionaryFields = {
   provinces: dictionaryQueryField(QuyuType, "区域", Quyu, () => {
     // console.log('invoked');
     return new Parse.Query(Quyu)

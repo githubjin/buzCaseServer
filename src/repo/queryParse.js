@@ -85,7 +85,10 @@ export function queryArticle(
 
 export function findEventOrNoteByArticle(type: string, parent: Object) {
   var Obj = Parse.Object.extend(type);
-  return new Parse.Query(Obj).equalTo("parent", parent).find();
+  return new Parse.Query(Obj)
+    .equalTo("isvalid", true)
+    .equalTo("parent", parent)
+    .find();
 }
 
 export function queryFeedback(

@@ -17,6 +17,7 @@ type Article implements Node {
   id: ID!
   attachments: [String]
   title: String
+  submit: Boolean
   categories: [String]
   name: String
   gender: String
@@ -142,6 +143,26 @@ type CategoryEdge {
   cursor: String!
 }
 
+input CategoryMutationInput {
+  # name and order add new record
+  name: String
+
+  # name and order add new record
+  order: Int
+
+  # record id, for delete record
+  id: String
+  clientMutationId: String
+}
+
+type CategoryMutationPayload {
+  newEdge: CategoryEdge
+  master: MasterType
+  distroyedId: String
+  error: String
+  clientMutationId: String
+}
+
 # Date custom scalar type
 scalar Date
 
@@ -197,6 +218,26 @@ type EducationEdge {
 
   # A cursor for use in pagination
   cursor: String!
+}
+
+input EducationMutationInput {
+  # name and order add new record
+  name: String
+
+  # name and order add new record
+  order: Int
+
+  # record id, for delete record
+  id: String
+  clientMutationId: String
+}
+
+type EducationMutationPayload {
+  newEdge: EducationEdge
+  master: MasterType
+  distroyedId: String
+  error: String
+  clientMutationId: String
 }
 
 # 案例人的重要事件
@@ -282,6 +323,26 @@ type GenderEdge {
   cursor: String!
 }
 
+input GenderMutationInput {
+  # name and order add new record
+  name: String
+
+  # name and order add new record
+  order: Int
+
+  # record id, for delete record
+  id: String
+  clientMutationId: String
+}
+
+type GenderMutationPayload {
+  newEdge: GenderEdge
+  master: MasterType
+  distroyedId: String
+  error: String
+  clientMutationId: String
+}
+
 # 出生地点省市县
 type HomePlace {
   province: String
@@ -325,6 +386,26 @@ type JobEdge {
   cursor: String!
 }
 
+input JobMutationInput {
+  # name and order add new record
+  name: String
+
+  # name and order add new record
+  order: Int
+
+  # record id, for delete record
+  id: String
+  clientMutationId: String
+}
+
+type JobMutationPayload {
+  newEdge: JobEdge
+  master: MasterType
+  distroyedId: String
+  error: String
+  clientMutationId: String
+}
+
 # 婚姻情况
 type Marriage implements Node {
   # The ID of an object
@@ -350,6 +431,26 @@ type MarriageEdge {
 
   # A cursor for use in pagination
   cursor: String!
+}
+
+input MarriageMutationInput {
+  # name and order add new record
+  name: String
+
+  # name and order add new record
+  order: Int
+
+  # record id, for delete record
+  id: String
+  clientMutationId: String
+}
+
+type MarriageMutationPayload {
+  newEdge: MarriageEdge
+  master: MasterType
+  distroyedId: String
+  error: String
+  clientMutationId: String
 }
 
 # 案例记录人(大师)
@@ -420,6 +521,11 @@ type Mutation {
   addFeedback(input: AddFeedbackInput!): AddFeedbackPayload
   signUp(input: SignUpInput!): SignUpPayload
   signIn(input: SignInInput!): SignInPayload
+  GenderMutation(input: GenderMutationInput!): GenderMutationPayload
+  CategoryMutation(input: CategoryMutationInput!): CategoryMutationPayload
+  EducationMutation(input: EducationMutationInput!): EducationMutationPayload
+  JobMutation(input: JobMutationInput!): JobMutationPayload
+  MarriageMutation(input: MarriageMutationInput!): MarriageMutationPayload
 }
 
 # An object with an ID

@@ -58,6 +58,10 @@ var ArticleType = new GraphQLObjectType({
       type: GraphQLString,
       resolve: parent => parent.get("title")
     },
+    submit: {
+      type: GraphQLBoolean,
+      resolve: parent => parent.get("submit")
+    },
     categories: {
       type: new GraphQLList(GraphQLString),
       resolve: parent => parent.get("categories")
