@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import { ParseServer } from "parse-server";
 import ParseDashboard from "parse-dashboard";
@@ -33,7 +34,8 @@ var api = new ParseServer({
   databaseURI: databaseUri || "mongodb://192.168.99.100:27017/dev",
   appId: APP_ID,
   masterKey: MASTER_KEY,
-  serverURL: process.env.SERVER_URL || "http://localhost:1337/parse"
+  serverURL: process.env.SERVER_URL || "http://localhost:1337/parse",
+  cloud: path.resolve(__dirname, "cloud.js")
 });
 
 var app = express();

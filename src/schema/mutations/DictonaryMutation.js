@@ -12,7 +12,8 @@ import Parse from "parse/node";
 import RootQueryType from "../query/RootQueryType";
 import { ROOT_MASTER } from "../../constants";
 import { getEdgeTypeByNodeName } from "../query/fields/dictionaries";
-
+import DictionaryType from "../types/DictionaryType";
+const User = Parse.Object.extend("User");
 function createDictioaryMutation(parseObjectName: string) {
   return mutationWithClientMutationId({
     name: `${parseObjectName}Mutation`,
@@ -32,7 +33,7 @@ function createDictioaryMutation(parseObjectName: string) {
     },
     outputFields: {
       newEdge: {
-        type: getEdgeTypeByNodeName(parseObjectName),
+        type: getEdgeTypeByNodeName(DictionaryType.name),
         resolve: ({ node }) => {
           if (_.isEmpty(node)) {
             return null;
@@ -69,6 +70,9 @@ function createDictioaryMutation(parseObjectName: string) {
         if (!_.isEmpty(name) && _.isNumber(order)) {
           record.set("name", name);
           record.set("order", order);
+          var user = new User();
+          user.id = req.master.userId;
+          record.set("owner", user);
           record.save({ sessionToken: req.master.sessionToken }).then(
             node => {
               resolve({ node });

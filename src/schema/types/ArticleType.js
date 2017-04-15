@@ -121,9 +121,9 @@ var ArticleType = new GraphQLObjectType({
     },
     events: {
       type: EventConnection,
-      resolve: (parent, args) =>
+      resolve: (parent, args, req) =>
         connectionFromPromisedArray(
-          findEventOrNoteByArticle("Event", parent),
+          findEventOrNoteByArticle("Event", parent, req.master.sessionToken),
           args
         )
     },
@@ -133,9 +133,9 @@ var ArticleType = new GraphQLObjectType({
     },
     notes: {
       type: NoteConnection,
-      resolve: (parent, args) =>
+      resolve: (parent, args, req) =>
         connectionFromPromisedArray(
-          findEventOrNoteByArticle("Note", parent),
+          findEventOrNoteByArticle("Note", parent, req.master.sessionToken),
           args
         )
     },

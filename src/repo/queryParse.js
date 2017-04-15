@@ -8,7 +8,7 @@ import { addSortToQuery } from "./utils";
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
 export function queryArticle(
-  { conditions, pageSize, page, sorters }: Conditions
+  { conditions, pageSize, page, sorters, sessionToken }: CommonArgsWithToken
 ) {
   var filters = conditions || {};
   const {
@@ -77,18 +77,22 @@ export function queryArticle(
     });
   }
   return Promise.all([
-    query.count(),
-    query.find(),
+    query.count({ sessionToken }),
+    query.find({ sessionToken }),
     Promise.resolve({ page, pageSize })
   ]);
 }
 
-export function findEventOrNoteByArticle(type: string, parent: Object) {
+export function findEventOrNoteByArticle(
+  type: string,
+  parent: Object,
+  sessionToken: string
+) {
   var Obj = Parse.Object.extend(type);
   return new Parse.Query(Obj)
     .equalTo("isvalid", true)
     .equalTo("parent", parent)
-    .find();
+    .find({ sessionToken });
 }
 
 export function queryFeedback(

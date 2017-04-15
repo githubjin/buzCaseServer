@@ -137,6 +137,7 @@ const SaveArticleMutation = mutationWithClientMutationId({
     }: Args,
     req
   ) => {
+    // console.log("req.master.sessionToken is : ", req.master.sessionToken, 1);
     var Article = Parse.Object.extend("Article");
     return Promise.all([
       updateArticleAddEN(id, submit, keys, values, addEvents, addNotes, req),
@@ -154,6 +155,7 @@ function updateEventOrNote(
   texts: string[],
   req: Object
 ): Promise<*> {
+  // console.log("req.master.sessionToken is : ", req.master.sessionToken, 4);
   if (_.isEmpty(ids) || _.isEmpty(texts) || ids.length !== texts.length) {
     return Promise.resolve([]);
   }
@@ -174,6 +176,7 @@ function subEventOrNote(
   subEventsOrNotes: string[],
   req: Object
 ): Promise<*> {
+  // console.log("req.master.sessionToken is : ", req.master.sessionToken, 3);
   if (_.isEmpty(subEventsOrNotes)) {
     return Promise.resolve([]);
   }
@@ -199,6 +202,7 @@ function updateArticleAddEN(
   addNote,
   req
 ): Promise<*> {
+  // console.log("req.master.sessionToken is : ", req.master.sessionToken, 2);
   if (
     !submit &&
     _.isEmpty(keys) &&
@@ -228,24 +232,24 @@ function updateArticleAddEN(
         .get(articleId, { sessionToken: req.master.sessionToken })
         .then((obj: any) => resolve(obj), error => reject(error));
     }
-  }).then(article => {
-    article.set("submit", submit);
-    article.set("isvalid", true);
-    // fill Article fields values
+  }).then(_article => {
+    _article.set("submit", submit);
+    _article.set("isvalid", true);
+    // fill _Article fields values
     if (
       !_.isEmpty(keys) && !_.isEmpty(values) && keys.length === values.length
     ) {
       keys.forEach((key, index) => {
-        article.set(key, getTureValue(values[index]));
+        _article.set(key, getTureValue(values[index]));
       });
     }
     var promiseArr = [];
-    // save article
-    promiseArr.push(article.save({ sessionToken: req.master.sessionToken }));
+    // save _article
+    promiseArr.push(_article.save({ sessionToken: req.master.sessionToken }));
     // save events
-    promiseArr.push(addEventOrNote("Event", article, addEvent, req));
+    promiseArr.push(addEventOrNote("Event", _article, addEvent, req));
     // save notes
-    promiseArr.push(addEventOrNote("Note", article, addNote, req));
+    promiseArr.push(addEventOrNote("Note", _article, addNote, req));
     return Promise.all(promiseArr);
   });
 }

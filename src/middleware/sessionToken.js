@@ -15,14 +15,14 @@ module.exports = function(req: Object, res: Object, next: any) {
     var { headers: { authorization } } = req;
     // console.log(`authorization middleware is get : ${authorization}`);
     if (!authorization) {
-      // return null;
-      return {
-        sessionToken: "r:058a5f4e251c3e6becde96abdf903ba8",
-        userId: "EqoYjY5neB",
-        username: "Jin",
-        email: "1252833909@qq.com",
-        emailVerified: false
-      };
+      return null;
+      // return {
+      //   sessionToken: "r:058a5f4e251c3e6becde96abdf903ba8",
+      //   userId: "EqoYjY5neB",
+      //   username: "Jin",
+      //   email: "1252833909@qq.com",
+      //   emailVerified: false
+      // };
     } else {
       // { sessionToken: user.sessionToken, userId: user.id }
       // start with "Bearer "

@@ -48,6 +48,7 @@ export default mutationWithClientMutationId({
     }
   },
   mutateAndGetPayload: ({ text, isPublic }, req) => {
+    // console.log("req.master.sessionToken is : ", req.master.sessionToken);
     return new Promise((resolve, reject) => {
       const { userId, username, sessionToken } = req.master;
       var Feedback = Parse.Object.extend("Feedback");

@@ -4194,7 +4194,7 @@
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "GenderEdge",
+                "name": "DictionaryEdge",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -4316,7 +4316,7 @@
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "CategoryEdge",
+                "name": "DictionaryEdge",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -4438,7 +4438,7 @@
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "EducationEdge",
+                "name": "DictionaryEdge",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -4560,7 +4560,7 @@
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "JobEdge",
+                "name": "DictionaryEdge",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -4682,7 +4682,7 @@
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "MarriageEdge",
+                "name": "DictionaryEdge",
                 "ofType": null
               },
               "isDeprecated": false,

@@ -156,7 +156,7 @@ input CategoryMutationInput {
 }
 
 type CategoryMutationPayload {
-  newEdge: CategoryEdge
+  newEdge: DictionaryEdge
   master: MasterType
   distroyedId: String
   error: String
@@ -233,7 +233,7 @@ input EducationMutationInput {
 }
 
 type EducationMutationPayload {
-  newEdge: EducationEdge
+  newEdge: DictionaryEdge
   master: MasterType
   distroyedId: String
   error: String
@@ -336,7 +336,7 @@ input GenderMutationInput {
 }
 
 type GenderMutationPayload {
-  newEdge: GenderEdge
+  newEdge: DictionaryEdge
   master: MasterType
   distroyedId: String
   error: String
@@ -399,7 +399,7 @@ input JobMutationInput {
 }
 
 type JobMutationPayload {
-  newEdge: JobEdge
+  newEdge: DictionaryEdge
   master: MasterType
   distroyedId: String
   error: String
@@ -446,7 +446,7 @@ input MarriageMutationInput {
 }
 
 type MarriageMutationPayload {
-  newEdge: MarriageEdge
+  newEdge: DictionaryEdge
   master: MasterType
   distroyedId: String
   error: String

@@ -63,19 +63,23 @@ function dictionaryQueryField(
 }
 
 function dictionaryPoolQueryField() {
-  var { connectionType: customConnection } = connectionDefinitions({
+  var {
+    connectionType: customConnection,
+    edgeType: GraphQLEdge
+  } = connectionDefinitions({
     name: DictionaryType.name,
     nodeType: DictionaryType
   });
+  EdgeTypes[DictionaryType.name] = GraphQLEdge;
   return {
     type: customConnection,
     description: "数据字典汇总查询",
     args: { ...connectionArgs, code: { type: GraphQLString, require: true } },
-    resolve: (_: Object, args: Object) =>
+    resolve: (_: Object, args: Object, req: Object) =>
       connectionFromPromisedArray(
         new Parse.Query(Parse.Object.extend(args.code))
           .ascending("order")
-          .find(),
+          .find({ sessionToken: req.master.sessionToken }),
         args
       )
   };
