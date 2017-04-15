@@ -58,9 +58,12 @@ export default mutationWithClientMutationId({
       var feedback = new Feedback();
       feedback.set("text", text);
       feedback.set("creator", user);
+      if (!isPublic) {
+        feedback.setACL(new Parse.ACL(user));
+      }
       feedback.set("username", username);
       feedback.set("isPublic", isPublic);
-      feedback.save({ sessionToken }).then(
+      feedback.save({}, { sessionToken }).then(
         obj => {
           resolve({ edge: obj });
         },

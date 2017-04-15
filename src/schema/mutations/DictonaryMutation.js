@@ -73,7 +73,8 @@ function createDictioaryMutation(parseObjectName: string) {
           var user = new User();
           user.id = req.master.userId;
           record.set("owner", user);
-          record.save({ sessionToken: req.master.sessionToken }).then(
+          record.setACL(new Parse.ACL(user));
+          record.save({}, { sessionToken: req.master.sessionToken }).then(
             node => {
               resolve({ node });
             },

@@ -16,18 +16,20 @@ module.exports = function(req: Object, res: Object, next: any) {
     // console.log(`authorization middleware is get : ${authorization}`);
     if (!authorization) {
       return null;
+      // {"a":"r:551adab952ba266d559b7325b06b75b7","b":"XLORYaOJTp","c":"Xiao","email":"000@qq.com","emailVerified":false,"iat":1492248866}
       // return {
-      //   sessionToken: "r:058a5f4e251c3e6becde96abdf903ba8",
-      //   userId: "EqoYjY5neB",
-      //   username: "Jin",
-      //   email: "1252833909@qq.com",
-      //   emailVerified: false
+      //   sessionToken: "r:551adab952ba266d559b7325b06b75b7",
+      //   userId: "XLORYaOJTp",
+      //   username: "Xiao",
+      //   email: "000@qq.com",
+      //   emailVerified: false,
+      //   iat: 1492248866
       // };
     } else {
       // { sessionToken: user.sessionToken, userId: user.id }
       // start with "Bearer "
       var master = verify(authorization.substr(7));
-      // console.log(master);
+      // console.log(JSON.stringify(master));
       return {
         sessionToken: master.a,
         userId: master.b,

@@ -17,7 +17,8 @@ function save(user: Object, datas: Object[], Claxx: any): void {
     newRecord.set("name", node.name);
     newRecord.set("order", node.order);
     newRecord.set("owner", user);
-    newRecord.save(null, { useMasterKey: true });
+    newRecord.setACL(new Parse.ACL(user));
+    newRecord.save({}, { useMasterKey: true });
   });
 }
 

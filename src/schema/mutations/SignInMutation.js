@@ -35,6 +35,7 @@ export default mutationWithClientMutationId({
     return new Promise((resolve, reject) => {
       Parse.User.logIn(username, password, {
         success: function(user) {
+          // console.log(JSON.stringify(user));
           resolve({ user });
         },
         error: function(user, error) {

@@ -6,7 +6,7 @@ import { ROOT_MASTER } from "../../constants";
 const sessionTokenKey = "sessionToken";
 
 function mergeMaster(user) {
-  console.log(user.id, user.get("username"));
+  // console.log(user.id, user.get("username"));
   return {
     id: ROOT_MASTER.id,
     username: user.get("username"),
@@ -53,7 +53,7 @@ module.exports = (
     return ROOT_MASTER;
   } else {
     // signup or signin
-    console.log(`signup or signin ${user.get("username")}`);
+    // console.log(`signup or signin ${user.get("username")}`);
     return mergeMaster(user);
   }
 };

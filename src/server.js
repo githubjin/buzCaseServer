@@ -6,16 +6,19 @@ import graphQLHTTP from "express-graphql";
 import { Schema } from "./schema/schema";
 import Parse from "parse/node";
 import sessionToken from "./middleware/sessionToken";
+import _ from "lodash";
 
 const databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI;
-const APP_ID = process.env.APP_ID || "eight-words-app";
+const APP_ID = process.env.APP_ID || "eightWordsApp";
 const MASTER_KEY = process.env.MASTER_KEY || "8zwords";
 const IS_DEVELOPMENT = process.env.NODE_ENV !== "production";
 const port = process.env.PORT || 1337;
+const restAPIKey = process.env.restAPIKey || "buscaseRestKey";
 
 Parse.initialize(APP_ID);
 Parse.serverURL = `http://localhost:${port}/parse`;
 Parse.masterKey = MASTER_KEY;
+// Parse.restAPIKey = restAPIKey;
 // Parse.Cloud.useMasterKey();
 
 function getSchema() {
@@ -36,6 +39,7 @@ var api = new ParseServer({
   masterKey: MASTER_KEY,
   serverURL: process.env.SERVER_URL || "http://localhost:1337/parse",
   cloud: path.resolve(__dirname, "cloud.js")
+  // restAPIKey
 });
 
 var app = express();
@@ -89,6 +93,22 @@ app.use(
     };
   })
 );
+
+// logout
+app.use("/logout", function(req, res) {
+  if (_.isEmpty(req.master)) {
+    res.sendStatus(403);
+  }
+  Parse.Cloud
+    .run("logout", { sessionToken: req.master.sessionToken })
+    .then(session => {
+      console.log("logout success !");
+    })
+    .catch(error => {
+      console.log("logout error !", JSON.stringify(error));
+    });
+  res.sendStatus(200);
+});
 
 var httpServer = require("http").createServer(app);
 httpServer.listen(port, () => {

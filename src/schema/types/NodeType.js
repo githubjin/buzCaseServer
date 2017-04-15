@@ -32,7 +32,7 @@ const Event = Parse.Object.extend("Event");
 const Feedback = Parse.Object.extend("Feedback");
 const User = Parse.Object.extend("User");
 
-function findObjectByGlobalId(globalId) {
+function findObjectByGlobalId(globalId, req) {
   if (globalId === "new") {
     return null;
   }
@@ -53,7 +53,9 @@ function findObjectByGlobalId(globalId) {
     Feedback,
     User
   }[type];
-  var result = new Parse.Query(Ent).get(id);
+  var result = new Parse.Query(Ent).get(id, {
+    sessionToken: req.master.sessionToken
+  });
   return result;
 }
 

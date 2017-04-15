@@ -166,7 +166,7 @@ function updateEventOrNote(
       var obj = new ClassType();
       obj.id = objId;
       obj.set("text", texts[index]);
-      return obj.save({ sessionToken: req.master.sessionToken });
+      return obj.save({}, { sessionToken: req.master.sessionToken });
     })
   );
 }
@@ -188,7 +188,7 @@ function subEventOrNote(
       // console.log(objId);
       obj.id = objId;
       obj.set("isvalid", false);
-      return obj.save({ sessionToken: req.master.sessionToken });
+      return obj.save({}, { sessionToken: req.master.sessionToken });
     })
   );
 }
@@ -222,8 +222,9 @@ function updateArticleAddEN(
       var user = new User();
       user.id = req.master.userId;
       article.set("owner", user);
+      article.setACL(new Parse.ACL(user));
       article
-        .save({ sessionToken: req.master.sessionToken })
+        .save({}, { sessionToken: req.master.sessionToken })
         .then(obj => resolve(obj), error => reject(error));
     } else {
       const articleId = fromGlobalId(id).id;
@@ -245,7 +246,9 @@ function updateArticleAddEN(
     }
     var promiseArr = [];
     // save _article
-    promiseArr.push(_article.save({ sessionToken: req.master.sessionToken }));
+    promiseArr.push(
+      _article.save({}, { sessionToken: req.master.sessionToken })
+    );
     // save events
     promiseArr.push(addEventOrNote("Event", _article, addEvent, req));
     // save notes
@@ -275,8 +278,9 @@ function addEventOrNote(type, article, eventOrNoteValues, req): Promise<*> {
     var user = new User();
     user.id = req.master.userId;
     eventOrNote.set("owner", user);
+    eventOrNote.setACL(new Parse.ACL(user));
     promiseArr.push(
-      eventOrNote.save({ sessionToken: req.master.sessionToken })
+      eventOrNote.save({}, { sessionToken: req.master.sessionToken })
     );
   });
   return Promise.all(promiseArr);
