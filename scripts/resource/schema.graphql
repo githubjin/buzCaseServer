@@ -87,6 +87,9 @@ input ArticleMutationInput {
   # added note values
   addNotes: [String]
 
+  # for add notes, to caculate cursor for new edge
+  noteIndex: Int
+
   # updated note ids
   noteIds: [String]
 
@@ -107,14 +110,35 @@ input ArticleMutationInput {
 type ArticleMutationPayload {
   keys: [String]
   eventKey2Ids: [String]
+
+  # Fetches an object given its ID
+  node(
+    # The ID of an object
+    id: ID!
+  ): Node
   article: Article
   newEvents: [EventEdge]
-  newNotes: [NoteEdge]
-  subEvents: [EventEdge]
-  subNotes: [NoteEdge]
+  newNotes: NoteEdge
+  subEvents: [String]
+  subNotes: [String]
   updatedEvents: [EventEdge]
   updatedNotes: [NoteEdge]
   clientMutationId: String
+}
+
+# Header搜索结果集合
+type AutoCompleteDatasource {
+  names: [AutoCompleteRecord]
+  titles: [AutoCompleteRecord]
+}
+
+# Header搜索结果记录
+type AutoCompleteRecord {
+  article: String
+  name: String
+  title: String
+  highlight: String
+  createdAt: String
 }
 
 # 案例类型
@@ -531,6 +555,9 @@ type MasterType implements Node {
 
   # 获取市县区级列表
   subQuyu(code: String): [Quyu]
+
+  # Header 搜索查询
+  autocomplete(token: String!, size: Int!): AutoCompleteDatasource
 }
 
 type Mutation {

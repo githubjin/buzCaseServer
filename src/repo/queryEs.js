@@ -1,30 +1,46 @@
 // @flow
 
-import bodybuilder from 'bodybuilder';
-import client from '../esClient';
+import bodybuilder from "bodybuilder";
+import client from "../esClient";
 
-const INDEX_NAME = "buscase";
-const TYPE_NAME = "article";
+import {
+  ARTICLE_INDEX,
+  ARTICLE_TYPE,
+  ARTICLE_INDEX_STANDARD,
+  ARTICLE_INDEX_IK
+} from "../constants";
+import { autocomplete } from "./queryBuilder";
 
-export function searchArticleByTitleOrName(titleOrName: string) {
-  var nameBody = bodybuilder()
-                .query('match', 'name', titleOrName)
-                .size(3)
-                .build();
-  var titleBody = bodybuilder()
-                .query('match', 'title', titleOrName)
-                .size(3)
-                .build();
-  client.msearch({
-    body: [
-      { index: INDEX_NAME, type: TYPE_NAME },
-      nameBody,
-      { index: INDEX_NAME, type: TYPE_NAME },
-      titleBody
-    ]
-  }, (...args) => {
-    console.log("msearch is done ! ", args.length);
-    console.log(args);
-    // 具体返回什么数据格式还不确定
+export function searchArticleByTitleOrName(
+  titleOrName: string,
+  username: string,
+  size: number
+): Promise<*> {
+  var nameBody = autocomplete(username, "name", titleOrName, size);
+  var titleBody = autocomplete(username, "title", titleOrName, size);
+  // console.log(JSON.stringify(nameBody));
+  // console.log(JSON.stringify(titleBody));
+  return new Promise((resolve, reject) => {
+    client.msearch(
+      {
+        body: [
+          { index: ARTICLE_INDEX, type: ARTICLE_TYPE },
+          nameBody,
+          { index: ARTICLE_INDEX, type: ARTICLE_TYPE },
+          titleBody
+        ]
+      },
+      (error, response, status) => {
+        if (error) {
+          reject(error);
+        } else {
+          if (response.error) {
+            reject(response.error);
+          } else {
+            resolve(response.responses);
+          }
+        }
+      }
+    );
   });
 }

@@ -5,7 +5,8 @@ import {
   GraphQLList,
   GraphQLInputObjectType,
   GraphQLNonNull,
-  GraphQLBoolean
+  GraphQLBoolean,
+  GraphQLInt
 } from "graphql";
 
 // 修改案例字段，增删事件、备注需要的字段
@@ -41,6 +42,10 @@ module.exports = {
   addNotes: {
     type: new GraphQLList(GraphQLString),
     description: "added note values"
+  },
+  noteIndex: {
+    type: GraphQLInt,
+    description: "for add notes, to caculate cursor for new edge"
   },
   // 更新事件或备注
   noteIds: {

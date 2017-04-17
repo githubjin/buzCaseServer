@@ -4,11 +4,12 @@ import {
   fromGlobalId,
   mutationWithClientMutationId,
   connectionFromArray,
-  toGlobalId
+  toGlobalId,
+  offsetToCursor
 } from "graphql-relay";
 import _ from "lodash";
+import { nodeField } from "../types/NodeType";
 import { GraphQLList, GraphQLString } from "graphql";
-
 import SaveArticleMutationArgsTypes
   from "../types/SaveArticleMutationArgsTypes";
 import FlatArticleMutationArgs from "../types/FlatArticleMutationArgs";
@@ -22,13 +23,20 @@ type Args = {
   subNotes: string[],
   addEvents: string[],
   addNotes: string[],
+  noteIndex: number,
   noteIds: string[],
   noteValues: string[],
   eventIds: string[],
   eventValues: string[],
   submit: boolean
 };
-type Response = [[Object, Object[], Object[]], Object[], Object[], Object[], Object[]];
+type Response = [
+  [Object, Object[], Object[]],
+  Object[],
+  Object[],
+  Object[],
+  Object[]
+];
 
 const Article = Parse.Object.extend("Article");
 const User = Parse.Object.extend("User");
@@ -74,6 +82,7 @@ const SaveArticleMutation = mutationWithClientMutationId({
         );
       }
     },
+    node: nodeField,
     article: {
       type: ArticleType,
       resolve: (source: Response) => {
@@ -88,22 +97,22 @@ const SaveArticleMutation = mutationWithClientMutationId({
       }
     },
     newNotes: {
-      type: new GraphQLList(getEventOrNoteEdgeType("Note")),
+      type: getEventOrNoteEdgeType("Note"),
       resolve: (source: Response, args) => {
-        return connectionFromArray(source[0][2], args).edges;
+        // return source[0][2][0];
+        return connectionFromArray(source[0][2], args).edges[0];
       }
     },
     subEvents: {
-      type: new GraphQLList(getEventOrNoteEdgeType("Event")),
-      resolve: (source: Response, args) => {
-        return connectionFromArray(source[1], args).edges;
+      type: new GraphQLList(GraphQLString),
+      resolve: (source: Response) => {
+        return source[1].map(e => toGlobalId("Event", e.id));
       }
     },
     subNotes: {
-      type: new GraphQLList(getEventOrNoteEdgeType("Note")),
-      resolve: (source: Response, args) => {
-        // console.log(source[2]);
-        return connectionFromArray(source[2], args).edges;
+      type: new GraphQLList(GraphQLString),
+      resolve: (source: Response) => {
+        return source[2].map(n => toGlobalId("Note", n.id));
       }
     },
     updatedEvents: {
@@ -133,14 +142,24 @@ const SaveArticleMutation = mutationWithClientMutationId({
       noteValues,
       eventIds,
       eventValues,
-      submit = false
+      submit = false,
+      noteIndex
     }: Args,
     req
   ) => {
     // console.log("req.master.sessionToken is : ", req.master.sessionToken, 1);
     var Article = Parse.Object.extend("Article");
     return Promise.all([
-      updateArticleAddEN(id, submit, keys, values, addEvents, addNotes, req),
+      updateArticleAddEN(
+        id,
+        submit,
+        keys,
+        values,
+        addEvents,
+        addNotes,
+        req,
+        noteIndex
+      ),
       subEventOrNote("Event", subEvents, req),
       subEventOrNote("Note", subNotes, req),
       updateEventOrNote("Event", eventIds, eventValues, req),
@@ -200,7 +219,8 @@ function updateArticleAddEN(
   values,
   addEvent,
   addNote,
-  req
+  req,
+  noteIndex
 ): Promise<*> {
   // console.log("req.master.sessionToken is : ", req.master.sessionToken, 2);
   if (
@@ -234,8 +254,12 @@ function updateArticleAddEN(
         .then((obj: any) => resolve(obj), error => reject(error));
     }
   }).then(_article => {
-    _article.set("submit", submit);
-    _article.set("isvalid", true);
+    var needSave = false;
+    if (!_.isBoolean(_article.get("submit")) || !_article.get("submit")) {
+      _article.set("submit", submit);
+      _article.set("isvalid", true);
+      needSave = true;
+    }
     // fill _Article fields values
     if (
       !_.isEmpty(keys) && !_.isEmpty(values) && keys.length === values.length
@@ -243,21 +267,30 @@ function updateArticleAddEN(
       keys.forEach((key, index) => {
         _article.set(key, getTureValue(values[index]));
       });
+      needSave = true;
     }
     var promiseArr = [];
     // save _article
     promiseArr.push(
-      _article.save({}, { sessionToken: req.master.sessionToken })
+      needSave
+        ? _article.save({}, { sessionToken: req.master.sessionToken })
+        : _article
     );
     // save events
     promiseArr.push(addEventOrNote("Event", _article, addEvent, req));
     // save notes
-    promiseArr.push(addEventOrNote("Note", _article, addNote, req));
+    promiseArr.push(addEventOrNote("Note", _article, addNote, req, noteIndex));
     return Promise.all(promiseArr);
   });
 }
 // 添加案例重大事件或备注
-function addEventOrNote(type, article, eventOrNoteValues, req): Promise<*> {
+function addEventOrNote(
+  type,
+  article,
+  eventOrNoteValues,
+  req,
+  noteIndex
+): Promise<*> {
   if (_.isEmpty(eventOrNoteValues)) {
     return Promise.resolve([]);
   }
@@ -279,9 +312,27 @@ function addEventOrNote(type, article, eventOrNoteValues, req): Promise<*> {
     user.id = req.master.userId;
     eventOrNote.set("owner", user);
     eventOrNote.setACL(new Parse.ACL(user));
+    // if (type === "Event") {
     promiseArr.push(
       eventOrNote.save({}, { sessionToken: req.master.sessionToken })
     );
+    // } else {
+    //   promiseArr.push(
+    //     new Promise((resolve, reject) => {
+    //       eventOrNote
+    //         .save({}, { sessionToken: req.master.sessionToken })
+    //         .then(note => {
+    //           resolve({
+    //             cursor: offsetToCursor(noteIndex ? noteIndex : 100),
+    //             node: note
+    //           });
+    //         })
+    //         .catch(error => {
+    //           reject(error);
+    //         });
+    //     })
+    //   );
+    // }
   });
   return Promise.all(promiseArr);
 }

@@ -1,5 +1,11 @@
 // @flow
-import { articles, feedbacks, dictionaries, subQuyu } from "./fields";
+import {
+  articles,
+  feedbacks,
+  dictionaries,
+  subQuyu,
+  autocomplete
+} from "./fields";
 import { GraphQLObjectType, GraphQLString, GraphQLBoolean } from "graphql";
 import { globalIdField, fromGlobalId } from "graphql-relay";
 import { nodeInterface } from "../types/NodeType";
@@ -37,7 +43,8 @@ module.exports = new GraphQLObjectType({
     articles,
     feedbacks,
     ...dictionaries,
-    subQuyu
+    subQuyu,
+    autocomplete
   },
   interfaces: [nodeInterface]
 });
