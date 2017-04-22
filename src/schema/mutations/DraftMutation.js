@@ -6,7 +6,8 @@ import {
 } from "graphql-relay";
 import Parse from "parse/node";
 import RootQueryType from "../query/RootQueryType";
-import { ROOT_MASTER } from "../../constants";
+import { resolveUserFromRequest } from "../utils";
+
 var Article = Parse.Object.extend("Article");
 module.exports = mutationWithClientMutationId({
   name: "DraftMutation",
@@ -21,9 +22,9 @@ module.exports = mutationWithClientMutationId({
     }
   },
   outputFields: {
-    master: {
+    viewer: {
       type: RootQueryType,
-      resolve: () => ROOT_MASTER
+      resolve: resolveUserFromRequest
     },
     distroyedId: {
       type: GraphQLString,

@@ -26,7 +26,7 @@ export default mutationWithClientMutationId({
         return JSON.stringify(error);
       }
     },
-    master: {
+    viewer: {
       type: RootQueryType,
       resolve: masterResolve
     }

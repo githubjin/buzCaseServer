@@ -11,7 +11,7 @@ var EightWordsQueryType = new GraphQLObjectType({
   name: "Query",
   fields: () => ({
     node: nodeField,
-    master: {
+    viewer: {
       type: RootQueryType,
       description: "大师",
       resolve: masterResolve

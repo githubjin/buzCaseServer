@@ -6,6 +6,7 @@ import SignUpMutation from "./SignUpMutation";
 import SignInMutation from "./SignInMutation";
 import DictionaryMutations from "./DictonaryMutation";
 import DraftMutation from "./DraftMutation";
+import ArticleDeleteMutation from "./ArticleDeleteMutation";
 
 export {
   SaveArticleMutation,
@@ -13,5 +14,6 @@ export {
   SignUpMutation,
   SignInMutation,
   DictionaryMutations,
-  DraftMutation
+  DraftMutation,
+  ArticleDeleteMutation
 };

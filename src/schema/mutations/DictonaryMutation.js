@@ -10,9 +10,10 @@ import {
 import Parse from "parse/node";
 // import GenderType from "../types/GenderType";
 import RootQueryType from "../query/RootQueryType";
-import { ROOT_MASTER } from "../../constants";
 import { getEdgeTypeByNodeName } from "../query/fields/dictionaries";
 import DictionaryType from "../types/DictionaryType";
+import { resolveUserFromRequest } from "../utils";
+
 const User = Parse.Object.extend("User");
 function createDictioaryMutation(parseObjectName: string) {
   return mutationWithClientMutationId({
@@ -44,9 +45,9 @@ function createDictioaryMutation(parseObjectName: string) {
           };
         }
       },
-      master: {
+      viewer: {
         type: RootQueryType,
-        resolve: () => ROOT_MASTER
+        resolve: resolveUserFromRequest
       },
       distroyedId: {
         type: GraphQLString,

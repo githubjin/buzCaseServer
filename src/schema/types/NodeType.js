@@ -18,7 +18,8 @@ import {
   mutationWithClientMutationId,
   nodeDefinitions
 } from "graphql-relay";
-import { ROOT_MASTER } from "../../constants";
+
+import { resolveUserFromRequest } from "../utils";
 
 const Article = Parse.Object.extend("Article");
 const Category = Parse.Object.extend("Category");
@@ -30,15 +31,16 @@ const Marriage = Parse.Object.extend("Marriage");
 const Note = Parse.Object.extend("Note");
 const Event = Parse.Object.extend("Event");
 const Feedback = Parse.Object.extend("Feedback");
-const User = Parse.Object.extend("User");
+const User = Parse.User;
 
 function findObjectByGlobalId(globalId, req) {
   if (globalId === "new") {
     return null;
   }
   const { type, id } = fromGlobalId(globalId);
-  if (type === "Master") {
-    return ROOT_MASTER;
+  console.log(type, id);
+  if (type === "User") {
+    return resolveUserFromRequest({}, {}, req);
   }
   const Ent = {
     Article,
@@ -60,6 +62,7 @@ function findObjectByGlobalId(globalId, req) {
 }
 
 function objectToGraphQLType(obj) {
+  console.log("obj.className", obj.className);
   switch (obj.className) {
     case "Article":
       return require("./ArticleType").default;
@@ -81,10 +84,10 @@ function objectToGraphQLType(obj) {
       return require("./EventType").default;
     case "Feedback":
       return require("./FeedbackType").default;
-    case "Master":
-      return require("../query/RootQueryType");
     case "User":
-      return require("./UserType");
+      return require("../query/RootQueryType");
+    // case "User":
+    //   return require("./UserType");
     default:
       return null;
   }

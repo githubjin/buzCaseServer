@@ -10,8 +10,8 @@ import FeedbackType from "../types/FeedbackType";
 import RootQueryType from "../query/RootQueryType";
 import Parse from "parse/node";
 import _ from "lodash";
-import { ROOT_MASTER } from "../../constants";
 import { getEdgeTypeByNodeName } from "../connection";
+import { resolveUserFromRequest } from "../utils";
 
 export default mutationWithClientMutationId({
   name: "AddFeedback",
@@ -33,9 +33,9 @@ export default mutationWithClientMutationId({
         };
       }
     },
-    master: {
+    viewer: {
       type: RootQueryType,
-      resolve: () => ROOT_MASTER
+      resolve: resolveUserFromRequest
     },
     error: {
       type: GraphQLString,

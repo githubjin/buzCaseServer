@@ -42,12 +42,12 @@
               "deprecationReason": null
             },
             {
-              "name": "master",
+              "name": "viewer",
               "description": "大师",
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "MasterType",
+                "name": "User",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -97,7 +97,7 @@
           "possibleTypes": [
             {
               "kind": "OBJECT",
-              "name": "MasterType",
+              "name": "User",
               "ofType": null
             },
             {
@@ -159,7 +159,7 @@
         },
         {
           "kind": "OBJECT",
-          "name": "MasterType",
+          "name": "User",
           "description": "案例记录人(大师)",
           "fields": [
             {
@@ -3655,6 +3655,33 @@
               },
               "isDeprecated": false,
               "deprecationReason": null
+            },
+            {
+              "name": "articlDel",
+              "description": "Article Delete by article id",
+              "args": [
+                {
+                  "name": "input",
+                  "description": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
+                      "name": "ArticleDeleteInput",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "ArticleDeletePayload",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
             }
           ],
           "inputFields": null,
@@ -4110,12 +4137,12 @@
               "deprecationReason": null
             },
             {
-              "name": "master",
+              "name": "viewer",
               "description": null,
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "MasterType",
+                "name": "User",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -4232,12 +4259,12 @@
               "deprecationReason": null
             },
             {
-              "name": "master",
+              "name": "viewer",
               "description": null,
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "MasterType",
+                "name": "User",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -4328,12 +4355,12 @@
               "deprecationReason": null
             },
             {
-              "name": "master",
+              "name": "viewer",
               "description": null,
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "MasterType",
+                "name": "User",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -4426,12 +4453,12 @@
               "deprecationReason": null
             },
             {
-              "name": "master",
+              "name": "viewer",
               "description": null,
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "MasterType",
+                "name": "User",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -4548,12 +4575,12 @@
               "deprecationReason": null
             },
             {
-              "name": "master",
+              "name": "viewer",
               "description": null,
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "MasterType",
+                "name": "User",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -4670,12 +4697,12 @@
               "deprecationReason": null
             },
             {
-              "name": "master",
+              "name": "viewer",
               "description": null,
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "MasterType",
+                "name": "User",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -4792,12 +4819,12 @@
               "deprecationReason": null
             },
             {
-              "name": "master",
+              "name": "viewer",
               "description": null,
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "MasterType",
+                "name": "User",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -4914,12 +4941,12 @@
               "deprecationReason": null
             },
             {
-              "name": "master",
+              "name": "viewer",
               "description": null,
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "MasterType",
+                "name": "User",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -5022,12 +5049,12 @@
           "description": null,
           "fields": [
             {
-              "name": "master",
+              "name": "viewer",
               "description": null,
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "MasterType",
+                "name": "User",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -5040,6 +5067,96 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "error",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "clientMutationId",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "INPUT_OBJECT",
+          "name": "ArticleDeleteInput",
+          "description": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "clientMutationId",
+              "description": null,
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            }
+          ],
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ArticleDeletePayload",
+          "description": null,
+          "fields": [
+            {
+              "name": "distroyedId",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "viewer",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "User",
                 "ofType": null
               },
               "isDeprecated": false,

@@ -6,7 +6,7 @@ input AddFeedbackInput {
 
 type AddFeedbackPayload {
   newEdge: FeedbackEdge
-  master: MasterType
+  viewer: User
   error: String
   clientMutationId: String
 }
@@ -41,6 +41,18 @@ type ArticleConnection {
   # A list of edges.
   edges: [ArticleEdge]
   totalInfo: TotalInfo
+}
+
+input ArticleDeleteInput {
+  id: String
+  clientMutationId: String
+}
+
+type ArticleDeletePayload {
+  distroyedId: String
+  viewer: User
+  error: String
+  clientMutationId: String
 }
 
 # An edge in a connection.
@@ -182,7 +194,7 @@ input CategoryMutationInput {
 
 type CategoryMutationPayload {
   newEdge: DictionaryEdge
-  master: MasterType
+  viewer: User
   distroyedId: String
   error: String
   clientMutationId: String
@@ -228,7 +240,7 @@ input DraftMutationInput {
 }
 
 type DraftMutationPayload {
-  master: MasterType
+  viewer: User
   distroyedId: String
   error: String
   clientMutationId: String
@@ -275,7 +287,7 @@ input EducationMutationInput {
 
 type EducationMutationPayload {
   newEdge: DictionaryEdge
-  master: MasterType
+  viewer: User
   distroyedId: String
   error: String
   clientMutationId: String
@@ -378,7 +390,7 @@ input GenderMutationInput {
 
 type GenderMutationPayload {
   newEdge: DictionaryEdge
-  master: MasterType
+  viewer: User
   distroyedId: String
   error: String
   clientMutationId: String
@@ -441,7 +453,7 @@ input JobMutationInput {
 
 type JobMutationPayload {
   newEdge: DictionaryEdge
-  master: MasterType
+  viewer: User
   distroyedId: String
   error: String
   clientMutationId: String
@@ -488,14 +500,167 @@ input MarriageMutationInput {
 
 type MarriageMutationPayload {
   newEdge: DictionaryEdge
-  master: MasterType
+  viewer: User
   distroyedId: String
   error: String
   clientMutationId: String
 }
 
+type Mutation {
+  saveArticle(input: ArticleMutationInput!): ArticleMutationPayload
+  addFeedback(input: AddFeedbackInput!): AddFeedbackPayload
+  signUp(input: SignUpInput!): SignUpPayload
+  signIn(input: SignInInput!): SignInPayload
+  GenderMutation(input: GenderMutationInput!): GenderMutationPayload
+  CategoryMutation(input: CategoryMutationInput!): CategoryMutationPayload
+  EducationMutation(input: EducationMutationInput!): EducationMutationPayload
+  JobMutation(input: JobMutationInput!): JobMutationPayload
+  MarriageMutation(input: MarriageMutationInput!): MarriageMutationPayload
+  DraftMutation(input: DraftMutationInput!): DraftMutationPayload
+
+  # Article Delete by article id
+  articlDel(input: ArticleDeleteInput!): ArticleDeletePayload
+}
+
+# An object with an ID
+interface Node {
+  # The id of the object.
+  id: ID!
+}
+
+# 案例后续追加的分析
+type Note implements Node {
+  # The ID of an object
+  id: ID!
+  text: String
+  key: Int
+  createdAt: Date
+}
+
+# A connection to a list of items.
+type NoteConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [NoteEdge]
+}
+
+# An edge in a connection.
+type NoteEdge {
+  # The item at the end of the edge
+  node: Note
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+# Information about pagination in a connection.
+type PageInfo {
+  # When paginating forwards, are there more items?
+  hasNextPage: Boolean!
+
+  # When paginating backwards, are there more items?
+  hasPreviousPage: Boolean!
+
+  # When paginating backwards, the cursor to continue.
+  startCursor: String
+
+  # When paginating forwards, the cursor to continue.
+  endCursor: String
+}
+
+type Query {
+  # Fetches an object given its ID
+  node(
+    # The ID of an object
+    id: ID!
+  ): Node
+
+  # 大师
+  viewer: User
+}
+
+# 排序方式
+input QuerySorter {
+  order: String
+  dir: String
+}
+
+# 省市县区域信息
+type Quyu implements Node {
+  # The ID of an object
+  id: ID!
+  name: String
+  hitrate: Float
+  order: Int
+  isLeaf: Boolean
+  parent: String
+  code: String
+  level: Int
+  children(code: String, all: Boolean): [Quyu]
+}
+
+# A connection to a list of items.
+type QuyuConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [QuyuEdge]
+}
+
+# An edge in a connection.
+type QuyuEdge {
+  # The item at the end of the edge
+  node: Quyu
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+input SignInInput {
+  username: String!
+  password: String!
+  clientMutationId: String
+}
+
+type SignInPayload {
+  error: String
+  viewer: User
+  clientMutationId: String
+}
+
+input SignUpInput {
+  username: String!
+  email: String!
+  password: String!
+  clientMutationId: String
+}
+
+type SignUpPayload {
+  error: String
+  viewer: User
+  clientMutationId: String
+}
+
+# 数据的统计信息
+type TotalInfo {
+  # 数据总数
+  total: Int
+
+  # 数据总页
+  totalPage: Int
+
+  # 当前页码
+  currentPage: Int
+
+  # 每页数据数量
+  pageSize: Int
+}
+
 # 案例记录人(大师)
-type MasterType implements Node {
+type User implements Node {
   # The ID of an object
   id: ID!
   username: String
@@ -558,154 +723,4 @@ type MasterType implements Node {
 
   # Header 搜索查询
   autocomplete(token: String!, size: Int!): AutoCompleteDatasource
-}
-
-type Mutation {
-  saveArticle(input: ArticleMutationInput!): ArticleMutationPayload
-  addFeedback(input: AddFeedbackInput!): AddFeedbackPayload
-  signUp(input: SignUpInput!): SignUpPayload
-  signIn(input: SignInInput!): SignInPayload
-  GenderMutation(input: GenderMutationInput!): GenderMutationPayload
-  CategoryMutation(input: CategoryMutationInput!): CategoryMutationPayload
-  EducationMutation(input: EducationMutationInput!): EducationMutationPayload
-  JobMutation(input: JobMutationInput!): JobMutationPayload
-  MarriageMutation(input: MarriageMutationInput!): MarriageMutationPayload
-  DraftMutation(input: DraftMutationInput!): DraftMutationPayload
-}
-
-# An object with an ID
-interface Node {
-  # The id of the object.
-  id: ID!
-}
-
-# 案例后续追加的分析
-type Note implements Node {
-  # The ID of an object
-  id: ID!
-  text: String
-  key: Int
-  createdAt: Date
-}
-
-# A connection to a list of items.
-type NoteConnection {
-  # Information to aid in pagination.
-  pageInfo: PageInfo!
-
-  # A list of edges.
-  edges: [NoteEdge]
-}
-
-# An edge in a connection.
-type NoteEdge {
-  # The item at the end of the edge
-  node: Note
-
-  # A cursor for use in pagination
-  cursor: String!
-}
-
-# Information about pagination in a connection.
-type PageInfo {
-  # When paginating forwards, are there more items?
-  hasNextPage: Boolean!
-
-  # When paginating backwards, are there more items?
-  hasPreviousPage: Boolean!
-
-  # When paginating backwards, the cursor to continue.
-  startCursor: String
-
-  # When paginating forwards, the cursor to continue.
-  endCursor: String
-}
-
-type Query {
-  # Fetches an object given its ID
-  node(
-    # The ID of an object
-    id: ID!
-  ): Node
-
-  # 大师
-  master: MasterType
-}
-
-# 排序方式
-input QuerySorter {
-  order: String
-  dir: String
-}
-
-# 省市县区域信息
-type Quyu implements Node {
-  # The ID of an object
-  id: ID!
-  name: String
-  hitrate: Float
-  order: Int
-  isLeaf: Boolean
-  parent: String
-  code: String
-  level: Int
-  children(code: String, all: Boolean): [Quyu]
-}
-
-# A connection to a list of items.
-type QuyuConnection {
-  # Information to aid in pagination.
-  pageInfo: PageInfo!
-
-  # A list of edges.
-  edges: [QuyuEdge]
-}
-
-# An edge in a connection.
-type QuyuEdge {
-  # The item at the end of the edge
-  node: Quyu
-
-  # A cursor for use in pagination
-  cursor: String!
-}
-
-input SignInInput {
-  username: String!
-  password: String!
-  clientMutationId: String
-}
-
-type SignInPayload {
-  error: String
-  master: MasterType
-  clientMutationId: String
-}
-
-input SignUpInput {
-  username: String!
-  email: String!
-  password: String!
-  clientMutationId: String
-}
-
-type SignUpPayload {
-  error: String
-  master: MasterType
-  clientMutationId: String
-}
-
-# 数据的统计信息
-type TotalInfo {
-  # 数据总数
-  total: Int
-
-  # 数据总页
-  totalPage: Int
-
-  # 当前页码
-  currentPage: Int
-
-  # 每页数据数量
-  pageSize: Int
 }
