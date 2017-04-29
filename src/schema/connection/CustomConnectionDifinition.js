@@ -10,7 +10,11 @@ import {
   GraphQLSchema,
   GraphQLInputObjectType
 } from "graphql";
-import { connectionDefinitions } from "graphql-relay";
+import {
+  connectionDefinitions,
+  offsetToCursor,
+  cursorToOffset
+} from "graphql-relay";
 import _ from "lodash";
 
 import PageInfoType from "../types/PageInfoType";
@@ -32,7 +36,18 @@ export default function ComtomConnectionDifinition(
   } = connectionDefinitions({
     name: name || nodeType.name,
     nodeType,
-    connectionFields
+    connectionFields,
+    resolveCursor: (source, orignalArgs, req, ast) => {
+      var args = getArgsFromAst(ast);
+      var { cursor } = source;
+      if (!_.isEmpty(args) && args.page && args.pageSize) {
+        var offset = cursorToOffset(cursor);
+        var { page, pageSize } = args;
+        var startOffset = (page - 1) * pageSize;
+        return offsetToCursor(startOffset + offset);
+      }
+      return cursor;
+    }
   });
   EdgeTypes[name] = GraphQLEdge;
   // var ArticleConnection = new GraphQLObjectType({
@@ -60,4 +75,26 @@ export default function ComtomConnectionDifinition(
   // });
   // return ArticleConnection;
   return customConnection;
+}
+
+function getArgsFromAst(ast: Object): Object {
+  var args = {};
+  try {
+    // console.log(JSON.stringify(ast));
+    var _arguments =
+      ast.operation.selectionSet.selections[0].selectionSet.selections[0]
+        .arguments;
+    if (!_.isEmpty(_arguments)) {
+      _arguments.forEach(arg => {
+        args[arg.name.value] = arg.value.value;
+      });
+    } else {
+      if (!_.isEmpty(ast.variableValues)) {
+        args = ast.variableValues;
+      }
+    }
+  } catch (error) {
+    console.log("ResolveCursor : get args from ast error: ", error);
+  }
+  return args;
 }

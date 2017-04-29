@@ -51,7 +51,7 @@ function dictionaryQueryField(
     // }),
     args: { ...connectionArgs, ...args },
     resolve: (_: Object, args: Object) => {
-      // console.log(args);
+      console.log("dictionary query : ", args);
       return connectionFromPromisedArray(
         resolve
           ? resolve()

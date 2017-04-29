@@ -15,6 +15,7 @@ type AddFeedbackPayload {
 type Article implements Node {
   # The ID of an object
   id: ID!
+  key: String
   attachments: [String]
   title: String
   submit: Boolean
@@ -320,6 +321,21 @@ type EventEdge {
   cursor: String!
 }
 
+# A faction in the Star Wars saga
+type Faction implements Node {
+  # The ID of an object
+  id: ID!
+
+  # id of faction in db
+  factionId: String
+
+  # The name of the faction.
+  name: String
+
+  # The ships used by the faction.
+  ships(after: String, first: Int, before: String, last: Int): ShipConnection
+}
+
 # 用户反馈
 type Feedback implements Node {
   # The ID of an object
@@ -459,6 +475,29 @@ type JobMutationPayload {
   clientMutationId: String
 }
 
+input LoadMoreArticleInput {
+  pageSize: Int
+  page: Int
+  sorters: [QuerySorter]
+  after: String
+  first: Int
+  before: String
+  last: Int
+
+  # find by node id
+  find: String
+  conditions: ArticleFilters
+  clientMutationId: String
+}
+
+type LoadMoreArticlePayload {
+  newEdges: [ArticleEdge]
+  pagination: Pagination
+  error: String
+  viewer: User
+  clientMutationId: String
+}
+
 # 婚姻情况
 type Marriage implements Node {
   # The ID of an object
@@ -520,6 +559,7 @@ type Mutation {
 
   # Article Delete by article id
   articlDel(input: ArticleDeleteInput!): ArticleDeletePayload
+  loadMoreArticle(input: LoadMoreArticleInput!): LoadMoreArticlePayload
 }
 
 # An object with an ID
@@ -570,6 +610,14 @@ type PageInfo {
   endCursor: String
 }
 
+# 分页信息
+type Pagination {
+  total: Int
+  currentPage: Int
+  totalPage: Int
+  pageSize: Int
+}
+
 type Query {
   # Fetches an object given its ID
   node(
@@ -614,6 +662,33 @@ type QuyuConnection {
 type QuyuEdge {
   # The item at the end of the edge
   node: Quyu
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+# A ship in the Star Wars saga
+type Ship implements Node {
+  # The ID of an object
+  id: ID!
+
+  # The name of the ship.
+  name: String
+}
+
+# A connection to a list of items.
+type ShipConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [ShipEdge]
+}
+
+# An edge in a connection.
+type ShipEdge {
+  # The item at the end of the edge
+  node: Ship
 
   # A cursor for use in pagination
   cursor: String!
@@ -723,4 +798,7 @@ type User implements Node {
 
   # Header 搜索查询
   autocomplete(token: String!, size: Int!): AutoCompleteDatasource
+
+  # demo
+  demo: Faction
 }

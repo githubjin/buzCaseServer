@@ -50,6 +50,10 @@ var ArticleType = new GraphQLObjectType({
   description: "八字命理案例",
   fields: () => ({
     id: globalIdField("Article"),
+    key: {
+      type: GraphQLString,
+      resolve: source => source.id
+    },
     attachments: {
       type: new GraphQLList(GraphQLString),
       resolve: parent => parent.get("attachments")

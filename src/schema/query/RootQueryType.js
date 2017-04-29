@@ -4,7 +4,8 @@ import {
   feedbacks,
   dictionaries,
   subQuyu,
-  autocomplete
+  autocomplete,
+  demo
 } from "./fields";
 import { GraphQLObjectType, GraphQLString, GraphQLBoolean } from "graphql";
 import { globalIdField, fromGlobalId } from "graphql-relay";
@@ -30,7 +31,7 @@ module.exports = new GraphQLObjectType({
     sessionToken: {
       type: GraphQLString,
       resolve: user => {
-        console.log(JSON.stringify(user));
+        // console.log(JSON.stringify(user));
         var tokens = sign({
           a: user.sessionToken ? user.sessionToken : user.get("sessionToken"),
           b: user.id,
@@ -54,7 +55,8 @@ module.exports = new GraphQLObjectType({
     feedbacks,
     ...dictionaries,
     subQuyu,
-    autocomplete
+    autocomplete,
+    demo
   },
   interfaces: [nodeInterface]
 });

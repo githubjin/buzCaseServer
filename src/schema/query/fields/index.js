@@ -5,5 +5,6 @@ module.exports = {
   feedbacks: require("./feedbacks"),
   dictionaries: require("./dictionaries").DictionaryFields,
   subQuyu: require("./subQuyu"),
-  autocomplete: require("./autocomplete")
+  autocomplete: require("./autocomplete"),
+  demo: require("./demo")
 };

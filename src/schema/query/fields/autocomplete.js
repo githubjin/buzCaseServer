@@ -43,12 +43,12 @@ function mapResponse(responses: Array<Object>, index: number): Array<Object> {
     // console.log("source.createdAt", source.createdAt, typeof source.createdAt);
     return {
       article: toGlobalId("Article", source.id),
-      name: highlight.name ? highlight.name[0] : source.name,
-      title: highlight.title ? highlight.title[0] : source.title,
-      highlight: highlight.name ? highlight.name[0] : highlight.title[0],
-      // name: source.name,
-      // title: source.title,
-      // highlight: index ? source.name : source.title,
+      // name: highlight.name ? highlight.name[0] : source.name,
+      // title: highlight.title ? highlight.title[0] : source.title,
+      // highlight: highlight.name ? highlight.name[0] : highlight.title[0],
+      name: source.name,
+      title: source.title,
+      highlight: index ? source.name : source.title,
       createdAt: source.createdAt
     };
   });

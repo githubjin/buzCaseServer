@@ -10,7 +10,8 @@ import {
   SignInMutation,
   DictionaryMutations,
   DraftMutation,
-  ArticleDeleteMutation
+  ArticleDeleteMutation,
+  LoadMoreArticleMutation
 } from "./mutations";
 import EightWordsQueryType from "./query";
 
@@ -23,7 +24,8 @@ const mutationType = new GraphQLObjectType({
     signIn: SignInMutation,
     ...DictionaryMutations,
     DraftMutation,
-    articlDel: ArticleDeleteMutation
+    articlDel: ArticleDeleteMutation,
+    loadMoreArticle: LoadMoreArticleMutation,
   })
 });
 

@@ -1,15 +1,22 @@
 // @flow
 import Parse from "parse/node";
 import _ from "lodash";
+import {cursorToOffset} from 'graphql-relay'
 import { SORT_TYPE_ASC } from "../constants";
 import type { Conditions, CommonArgsWithToken } from "./types";
 import { addSortToQuery } from "./utils";
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
-export function queryArticle(
-  { conditions, pageSize, page, sorters, sessionToken }: CommonArgsWithToken
-) {
+export function queryArticle({
+  conditions,
+  pageSize,
+  page,
+  sorters,
+  first,
+  after,
+  sessionToken
+}: CommonArgsWithToken) {
   var filters = conditions || {};
   const {
     education,
@@ -63,10 +70,24 @@ export function queryArticle(
     query.greaterThanOrEqualTo("createdAt", new Date(createOn));
     query.lessThan("createdAt", new Date(createOn + ONE_DAY));
   }
-  query.limit(pageSize);
-  if (page > 1) {
-    query.skip((page - 1) * pageSize);
+  var skiper = 0;
+  if(!page && !pageSize) {
+    if(!_.isEmpty(after)) {
+      skiper = cursorToOffset(after) + 1;
+      pageSize = 10;
+      let total = first + skiper;
+      page = Math.floor(total / pageSize) + (total % pageSize === 0 ? 0 : 1);
+    } else if(first){
+      pageSize = 10;
+      page = Math.floor(first/pageSize) + (first%pageSize===0?0:1);
+      skiper = (page - 1) * pageSize;
+    }
+  }else {
+    skiper = (page - 1) * pageSize;
   }
+
+  query.limit(pageSize);
+  query.skip(skiper);
   if (sorters != null && !_.isEmpty(sorters)) {
     _.forEachRight(sorters, sorter => {
       if (sorter.dir === SORT_TYPE_ASC) {

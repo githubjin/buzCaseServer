@@ -38,7 +38,7 @@ function findObjectByGlobalId(globalId, req) {
     return null;
   }
   const { type, id } = fromGlobalId(globalId);
-  console.log(type, id);
+  // console.log(type, id);
   if (type === "User") {
     return resolveUserFromRequest({}, {}, req);
   }
@@ -62,7 +62,7 @@ function findObjectByGlobalId(globalId, req) {
 }
 
 function objectToGraphQLType(obj) {
-  console.log("obj.className", obj.className);
+  // console.log("obj.className", obj.className);
   switch (obj.className) {
     case "Article":
       return require("./ArticleType").default;

@@ -1,28 +1,29 @@
 // @flow
-import { connectionFromArraySlice } from 'graphql-relay';
+import { connectionFromArraySlice, offsetToCursor } from "graphql-relay";
 
 module.exports = function(dataPromise: Promise<*>, args: Object): any {
   return dataPromise.then(([count, nodes, pages]) => {
-    let connection = connectionFromArraySlice(
-        nodes,
-        args,
-        {
-            sliceStart: 0,
-            arrayLength: count
-        }
+    console.log("nodes.length", nodes.length);
+    let connection = connectionFromArraySlice(nodes, pages, {
+      sliceStart: 0,
+      arrayLength: count
+    });
+    let totalPage = Math.floor(
+      count / pages.pageSize + (count % pages.pageSize > 0 ? 1 : 0)
     );
-    let totalPage = Math.floor((count / args.pageSize) + (count % args.pageSize > 0 ? 1 : 0));
     connection.totalInfo = {
       total: count,
-      currentPage: args.page,
-      pageSize: args.pageSize,
-      totalPage,
+      currentPage: pages.page,
+      pageSize: pages.pageSize,
+      totalPage
     };
     connection.pageInfo = {
-      ...connection.pageInfo,
-      hasNextPage: (args.page < totalPage),
-      hasPreviousPage: (args.page > 1),
-    }
+      // ...connection.pageInfo,
+      startCursor: offsetToCursor((pages.page - 1) * pages.pageSize),
+      endCursor: offsetToCursor(pages.page * pages.pageSize - 1),
+      hasNextPage: pages.page < totalPage,
+      hasPreviousPage: pages.page > 1
+    };
     return connection;
   });
-}
+};
